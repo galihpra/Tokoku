@@ -1,0 +1,9 @@
+package model
+
+import "gorm.io/gorm"
+
+type Customer struct {
+	gorm.Model
+	Hp   string
+	Nama string
+}
