@@ -1,9 +1,16 @@
 package model
 
-import "gorm.io/gorm"
+import (
+	"time"
+
+	"gorm.io/gorm"
+)
 
 type Customer struct {
-	gorm.Model
-	Hp   string
-	Nama string
+	Hp         string `gorm:"type:varchar(13);primaryKey"`
+	Nama       string
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
+	DeletedAt  gorm.DeletedAt `gorm:"index"`
+	Pembelians []Pembelian
 }
