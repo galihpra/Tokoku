@@ -29,3 +29,17 @@ func (us *UserSystem) RegisterUser() (model.User, bool) {
 
 	return *newUser, true
 }
+
+func (us *UserSystem) ReadUser() ([]model.User, bool) {
+	var userList []model.User
+
+	qry := us.DB.Find(&userList)
+	err := qry.Error
+
+	if err != nil {
+		fmt.Println("Error read data table:", err.Error())
+		return nil, false
+	}
+
+	return userList, true
+}
