@@ -1,11 +1,19 @@
 package model
 
-import "gorm.io/gorm"
+import (
+	"time"
+
+	"gorm.io/gorm"
+)
 
 type User struct {
-	gorm.Model
-	Username string
-	Nama     string
-	Status   string
-	Password string
+	Username   string `gorm:"type:varchar(55);primaryKey"`
+	Nama       string
+	Status     int
+	Password   string
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
+	DeletedAt  gorm.DeletedAt `gorm:"index"`
+	Pembelians []Pembelian
+	Products   []Product
 }
