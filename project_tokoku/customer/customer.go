@@ -40,3 +40,20 @@ func (cs *CustomerSystem) ReadCustomer() ([]model.Customer, bool) {
 
 	return customerList, true
 }
+
+func (cs *CustomerSystem) DeleteCustomer(customerID string) bool {
+	var customer model.Customer
+
+	qry := cs.DB.Where("hp = ?", customerID).First(&customer)
+	if qry.Error != nil {
+		fmt.Println("Customer tidak ditemukan")
+		return false
+	}
+
+	if err := cs.DB.Delete(&customer).Error; err != nil {
+		fmt.Println("Gagal menghapus Customer: ", err.Error())
+		return false
+	}
+
+	return true
+}

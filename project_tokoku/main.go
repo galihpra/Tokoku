@@ -159,7 +159,13 @@ func main() {
 								}
 							case 3:
 							case 4:
-							case 5:
+								var customerID string
+								fmt.Print("Masukkan Nomor HP: ")
+								fmt.Scanln(&customerID)
+								sucess := customer.DeleteCustomer(customerID)
+								if sucess {
+									fmt.Println("Data customer berhasil dihapus")
+								}
 							case 0:
 								menuCustomerActive = false
 							}
