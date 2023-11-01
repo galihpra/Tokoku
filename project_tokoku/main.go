@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"project_tokoku/auth"
 	"project_tokoku/config"
+	"project_tokoku/customer"
 	"project_tokoku/model"
 	"project_tokoku/products"
 	"project_tokoku/users"
@@ -26,6 +27,7 @@ func main() {
 	var auth = auth.AuthSystem{DB: db}
 	var users = users.UserSystem{DB: db}
 	var products = products.ProductSystem{DB: db}
+	var customer = customer.CustomerSystem{DB: db}
 
 	for {
 		fmt.Println("1. Login")
@@ -131,6 +133,31 @@ func main() {
 							}
 						}
 					case 3:
+						var menuCustomer int
+						var menuCustomerActive bool = true
+						for menuCustomerActive {
+							fmt.Println("Menu Customer:")
+							fmt.Println("1. Tambahkan Customer")
+							fmt.Println("2. Lihat Daftar Customer")
+							fmt.Println("3. Ubah Informasi Customer")
+							fmt.Println("4. Hapus Customer")
+							fmt.Println("0. Kembali")
+							fmt.Print("Pilih Menu: ")
+							fmt.Scanln(&menuCustomer)
+							switch menuCustomer {
+							case 1:
+								result, permit := customer.CreateCustomer()
+								if permit {
+									fmt.Println(result)
+								}
+							case 2:
+							case 3:
+							case 4:
+							case 5:
+							case 0:
+								menuCustomerActive = false
+							}
+						}
 					case 4:
 					case 0:
 						permit = false
