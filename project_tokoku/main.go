@@ -91,7 +91,7 @@ func main() {
 							fmt.Println("2. Lihat Daftar Produk")
 							fmt.Println("3. Ubah Informasi Produk")
 							fmt.Println("4. Update Stok Produk")
-							fmt.Println("5. Hapus User")
+							fmt.Println("5. Hapus Produk")
 							fmt.Println("0. Kembali")
 							fmt.Print("Pilih Menu: ")
 							fmt.Scanln(&menuProduk)
@@ -230,6 +230,22 @@ func main() {
 									}
 								}
 							case 3:
+								var barcode string
+								var produkUpdate model.Product
+								fmt.Print("Masukkan barcode produk: ")
+								fmt.Scanln(&barcode)
+
+								fmt.Print("Masukkan Nama Produk: ")
+								fmt.Scanln(&produkUpdate.Nama)
+								fmt.Print("Masukkan Harga Produk: ")
+								fmt.Scanln(&produkUpdate.Harga)
+								produkUpdate.UserID = result.Username
+
+								success := products.UpdateInfoProduk(barcode, produkUpdate)
+
+								if success {
+									fmt.Println("Produk berhasil diubah")
+								}
 							case 4:
 							case 0:
 								menuProdukActive = false
