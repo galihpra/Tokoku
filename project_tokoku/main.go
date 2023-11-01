@@ -6,6 +6,7 @@ import (
 	"project_tokoku/config"
 	"project_tokoku/customer"
 	"project_tokoku/model"
+	"project_tokoku/pembelian"
 	"project_tokoku/products"
 	"project_tokoku/users"
 )
@@ -28,6 +29,7 @@ func main() {
 	var users = users.UserSystem{DB: db}
 	var products = products.ProductSystem{DB: db}
 	var customer = customer.CustomerSystem{DB: db}
+	var pembelian = pembelian.PembelianSystem{DB: db}
 
 	for {
 		fmt.Println("1. Login")
@@ -184,6 +186,30 @@ func main() {
 							}
 						}
 					case 4:
+						var menuTransaksi int
+						var menuTransaksiActive bool = true
+						for menuTransaksiActive {
+							fmt.Println("Menu Transaksi:")
+							fmt.Println("1. Buat Transaksi")
+							fmt.Println("2. Lihat Daftar Transaksi")
+							fmt.Println("3. Ubah Informasi Transaksi")
+							fmt.Println("4. Hapus Transaksi")
+							fmt.Println("0. Kembali")
+							fmt.Print("Pilih Menu: ")
+							fmt.Scanln(&menuTransaksi)
+							switch menuTransaksi {
+							case 1:
+								result, permit := pembelian.CreatePembelian(result.Username)
+								if permit {
+									fmt.Println(result)
+								}
+							case 2:
+							case 3:
+							case 4:
+							case 0:
+								menuTransaksiActive = false
+							}
+						}
 					case 0:
 						permit = false
 						fmt.Println("Anda sudah logout")
