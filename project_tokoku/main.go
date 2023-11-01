@@ -213,7 +213,6 @@ func main() {
 							fmt.Println("2. Lihat Daftar Produk")
 							fmt.Println("3. Ubah Informasi Produk")
 							fmt.Println("4. Update Stok Produk")
-							fmt.Println("5. Hapus User")
 							fmt.Println("0. Kembali")
 							fmt.Print("Pilih Menu: ")
 							fmt.Scanln(&menuProduk)
@@ -232,12 +231,52 @@ func main() {
 								}
 							case 3:
 							case 4:
-							case 5:
 							case 0:
 								menuProdukActive = false
 							}
 						}
 					case 2:
+						var menuCustomer int
+						var menuCustomerActive bool = true
+						for menuCustomerActive {
+							fmt.Println("Menu Customer:")
+							fmt.Println("1. Tambahkan Customer")
+							fmt.Println("2. Lihat Daftar Customer")
+							fmt.Println("3. Ubah Informasi Customer")
+							fmt.Println("0. Kembali")
+							fmt.Print("Pilih Menu: ")
+							fmt.Scanln(&menuCustomer)
+							switch menuCustomer {
+							case 1:
+								result, permit := customer.CreateCustomer()
+								if permit {
+									fmt.Println(result)
+								}
+							case 2:
+								result, permit := customer.ReadCustomer()
+								if permit {
+									for _, a := range result {
+										fmt.Println(a)
+									}
+								}
+							case 3:
+								var hp string
+								var customerUpdate model.Customer
+								fmt.Print("Masukkan Nomor HP: ")
+								fmt.Scanln(&hp)
+
+								fmt.Print("Masukkan Nama Customer: ")
+								fmt.Scanln(&customerUpdate.Nama)
+
+								success := customer.UpdateCustomer(hp, customerUpdate)
+
+								if success {
+									fmt.Println("Customer berhasil diubah")
+								}
+							case 0:
+								menuCustomerActive = false
+							}
+						}
 					case 3:
 					case 0:
 						permit = false
