@@ -57,3 +57,21 @@ func (cs *CustomerSystem) DeleteCustomer(customerID string) bool {
 
 	return true
 }
+
+func (cs *CustomerSystem) UpdateCustomer(hp string, customerUpdate model.Customer) bool {
+	var customer model.Customer
+	qry := cs.DB.Where("hp = ?", hp).First(&customer)
+	if qry.Error != nil {
+		fmt.Println("Customer tidak ditemukan")
+		return false
+	}
+
+	customer.Nama = customerUpdate.Nama
+
+	if err := cs.DB.Model(&customer).Updates(&customer).Error; err != nil {
+		fmt.Println("Gagal mengupdate customer: ", err.Error())
+		return false
+	}
+
+	return true
+}
