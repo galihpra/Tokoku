@@ -26,3 +26,17 @@ func (cs *CustomerSystem) CreateCustomer() (model.Customer, bool) {
 
 	return *newCustomer, true
 }
+
+func (cs *CustomerSystem) ReadCustomer() ([]model.Customer, bool) {
+	var customerList []model.Customer
+
+	qry := cs.DB.Find(&customerList)
+	err := qry.Error
+
+	if err != nil {
+		fmt.Println("Error read data table:", err.Error())
+		return nil, false
+	}
+
+	return customerList, true
+}
