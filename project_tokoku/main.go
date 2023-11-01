@@ -158,6 +158,19 @@ func main() {
 									}
 								}
 							case 3:
+								var hp string
+								var customerUpdate model.Customer
+								fmt.Print("Masukkan Nomor HP: ")
+								fmt.Scanln(&hp)
+
+								fmt.Print("Masukkan Nama Customer: ")
+								fmt.Scanln(&customerUpdate.Nama)
+
+								success := customer.UpdateCustomer(hp, customerUpdate)
+
+								if success {
+									fmt.Println("Customer berhasil diubah")
+								}
 							case 4:
 								var customerID string
 								fmt.Print("Masukkan Nomor HP: ")
