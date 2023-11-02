@@ -37,3 +37,24 @@ func (dps *DetailPembelianSystem) CreateDetailPembelian() (model.DetailPembelian
 
 	return *newDetailPembelian, true
 }
+
+func (dps *DetailPembelianSystem) ReadDetailPembelian() ([]model.DetailPembelian, bool) {
+	var listDetail []model.DetailPembelian
+
+	var invoice string
+	fmt.Println("Masukkan Nomor Invoice: ")
+	fmt.Scanln(&invoice)
+
+	err := dps.DB.Where("pembelian_id = ?", invoice).Model(&model.DetailPembelian{}).
+		Select("detail_pembelians.pembelian_id, detail_pembelians.qty, detail_pembelians.sub_total, products.nama as nama").
+		Joins("JOIN products on detail_pembelians.product_id = products.barcode").
+		Scan(&listDetail).
+		Error
+
+	if err != nil {
+		fmt.Println("Error:", err.Error())
+		return nil, false
+	}
+
+	return listDetail, true
+}

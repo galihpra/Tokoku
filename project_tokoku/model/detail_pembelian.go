@@ -14,4 +14,5 @@ type DetailPembelian struct {
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 	DeletedAt   gorm.DeletedAt `gorm:"index"`
+	ProdukNama  string         `gorm:"column:nama"`
 }
