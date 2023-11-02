@@ -216,12 +216,32 @@ func main() {
 									fmt.Println("====================================")
 								}
 							case 2:
-								result, permit := pembelian.ReadPembelian()
-								if permit {
-									for _, a := range result {
-										fmt.Println(a)
+								var PilihBarang []string
+								var Jumlah []int
+								var barcode string
+								var jml int
+
+								for {
+									fmt.Println("Masukkan Barcode Produk: ")
+									fmt.Scanln(&barcode)
+									fmt.Println("Masukkan Jumlah Produk: ")
+									fmt.Scanln(&jml)
+
+									PilihBarang = append(PilihBarang, barcode)
+									Jumlah = append(Jumlah, jml)
+
+									fmt.Print("Tambahkan Produk Lainnya? (y/n): ")
+									var pilihan string
+									fmt.Scanln(&pilihan)
+
+									if pilihan != "y" {
+										break
 									}
 								}
+
+								fmt.Println(PilihBarang)
+								fmt.Println(Jumlah)
+
 							case 3:
 							case 4:
 							case 0:
