@@ -196,8 +196,8 @@ func main() {
 						var menuTransaksiActive bool = true
 						for menuTransaksiActive {
 							fmt.Println("Menu Transaksi:")
-							fmt.Println("1. Buat Transaksi")
-							fmt.Println("2. Lihat Daftar Transaksi")
+							fmt.Println("1. Lihat Daftar Produk")
+							fmt.Println("2. Pilih Produk")
 							fmt.Println("3. Ubah Informasi Transaksi")
 							fmt.Println("4. Hapus Transaksi")
 							fmt.Println("0. Kembali")
@@ -205,9 +205,15 @@ func main() {
 							fmt.Scanln(&menuTransaksi)
 							switch menuTransaksi {
 							case 1:
-								result, permit := pembelian.CreatePembelian(result.Username)
+								result, permit := products.ReadProducts()
 								if permit {
-									fmt.Println(result)
+									fmt.Println("====================================")
+									fmt.Println(" Barcode    Produk     Harga    Stok")
+									fmt.Println("------------------------------------")
+									for _, a := range result {
+										fmt.Println(a.Barcode, "  ", a.Nama, "  ", a.Harga, "  ", a.Stok)
+									}
+									fmt.Println("====================================")
 								}
 							case 2:
 								result, permit := pembelian.ReadPembelian()
