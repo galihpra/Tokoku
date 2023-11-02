@@ -16,4 +16,5 @@ type Product struct {
 	UpdatedAt        time.Time
 	DeletedAt        gorm.DeletedAt `gorm:"index"`
 	DetailPembelians []DetailPembelian
+	UserNama         string `gorm:"column:nama"`
 }

@@ -107,7 +107,9 @@ func main() {
 								result, permit := products.ReadProducts()
 								if permit {
 									for _, a := range result {
-										fmt.Println(a)
+										fmt.Printf("Barcode : %s \nNama Editor : %s \nNama Barang : %s \nHarga : %d \nStok : %d \n", a.Barcode, a.UserNama, a.Nama, a.Harga, a.Stok)
+										fmt.Println("================================")
+										// fmt.Println(a)
 									}
 								}
 							case 3:
