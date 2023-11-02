@@ -5,6 +5,7 @@ import (
 	"project_tokoku/auth"
 	"project_tokoku/config"
 	"project_tokoku/customer"
+	"project_tokoku/detailPembelian"
 	"project_tokoku/model"
 	"project_tokoku/pembelian"
 	"project_tokoku/products"
@@ -30,6 +31,7 @@ func main() {
 	var products = products.ProductSystem{DB: db}
 	var customer = customer.CustomerSystem{DB: db}
 	var pembelian = pembelian.PembelianSystem{DB: db}
+	var detailPembelian = detailPembelian.DetailPembelianSystem{DB: db}
 
 	for {
 		fmt.Println("1. Login")
@@ -48,6 +50,7 @@ func main() {
 					fmt.Println("2. Produk")
 					fmt.Println("3. Customer")
 					fmt.Println("4. Transaksi")
+					fmt.Println("5. Detail Transaksi")
 					fmt.Println("0. Logout")
 					fmt.Println("99. Exit")
 					fmt.Print("Pilih Menu: ")
@@ -216,6 +219,31 @@ func main() {
 							case 4:
 							case 0:
 								menuTransaksiActive = false
+							}
+						}
+					case 5:
+						var menuDetailTransaksi int
+						var menuDetailTransaksiActive bool = true
+						for menuDetailTransaksiActive {
+							fmt.Println("Menu Detail Transaksi:")
+							fmt.Println("1. Masukkan Produk")
+							fmt.Println("2. Cetak Struk")
+							fmt.Println("3. Ubah Detail Transaksi")
+							fmt.Println("4. Hapus Detail Transaksi")
+							fmt.Println("0. Kembali")
+							fmt.Print("Pilih Menu: ")
+							fmt.Scanln(&menuDetailTransaksi)
+							switch menuDetailTransaksi {
+							case 1:
+								result, permit := detailPembelian.CreateDetailPembelian()
+								if permit {
+									fmt.Println(result)
+								}
+							case 2:
+							case 3:
+							case 4:
+							case 0:
+								menuDetailTransaksiActive = false
 							}
 						}
 					case 0:
