@@ -264,23 +264,23 @@ func main() {
 											}
 											fmt.Println("              total : ", total)
 											fmt.Println("====================================")
-										}
 
-										var simpanTransaksi string
-										fmt.Print("Buat Transaksi? (y/n): ")
-										fmt.Scanln(&simpanTransaksi)
-										if simpanTransaksi == "y" {
-											pembelian.CreatePembelian(HP, result.Username)
-											detailPembelian.CreateDetailPembelian(PilihBarang, Jumlah)
-											PilihBarang = nil
-											Jumlah = nil
-											fmt.Println("*********Transaksi Berhasil*********")
-											break
-										} else if simpanTransaksi == "n" {
-											PilihBarang = nil
-											Jumlah = nil
-											fmt.Println("*********Transaksi Dibatalkan*********")
-											break
+											var simpanTransaksi string
+											fmt.Print("Buat Transaksi? (y/n): ")
+											fmt.Scanln(&simpanTransaksi)
+											if simpanTransaksi == "y" {
+												pembelian.CreatePembelian(HP, result.Username, total)
+												detailPembelian.CreateDetailPembelian(PilihBarang, Jumlah)
+												PilihBarang = nil
+												Jumlah = nil
+												fmt.Println("*********Transaksi Berhasil*********")
+												break
+											} else if simpanTransaksi == "n" {
+												PilihBarang = nil
+												Jumlah = nil
+												fmt.Println("*********Transaksi Dibatalkan*********")
+												break
+											}
 										}
 									}
 								}

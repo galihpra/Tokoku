@@ -18,11 +18,12 @@ func buatInvoice() string {
 	return fmt.Sprintf("TKK--%d-%02d-%02d-%03d", tanggal.Year(), tanggal.Month(), tanggal.Day(), tanggal.Minute())
 }
 
-func (ps *PembelianSystem) CreatePembelian(HP, userID string) (model.Pembelian, bool) {
+func (ps *PembelianSystem) CreatePembelian(HP, userID string, total int) (model.Pembelian, bool) {
 	var newPembelian = new(model.Pembelian)
 	newPembelian.CustomerID = HP
 	newPembelian.No_invoice = buatInvoice()
 	newPembelian.UserID = userID
+	newPembelian.Total = total
 
 	err := ps.DB.Create(newPembelian).Error
 	if err != nil {
