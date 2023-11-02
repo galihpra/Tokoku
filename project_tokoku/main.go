@@ -204,6 +204,12 @@ func main() {
 									fmt.Println(result)
 								}
 							case 2:
+								result, permit := pembelian.ReadPembelian()
+								if permit {
+									for _, a := range result {
+										fmt.Println(a)
+									}
+								}
 							case 3:
 							case 4:
 							case 0:

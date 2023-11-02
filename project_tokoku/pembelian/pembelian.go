@@ -27,3 +27,17 @@ func (ps *PembelianSystem) CreatePembelian(userID string) (model.Pembelian, bool
 
 	return *newPembelian, true
 }
+
+func (ps *PembelianSystem) ReadPembelian() ([]model.Pembelian, bool) {
+	var pembelianList []model.Pembelian
+
+	qry := ps.DB.Find(&pembelianList)
+	err := qry.Error
+
+	if err != nil {
+		fmt.Println("Error read data table:", err.Error())
+		return nil, false
+	}
+
+	return pembelianList, true
+}
