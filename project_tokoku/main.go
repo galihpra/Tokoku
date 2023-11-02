@@ -93,7 +93,7 @@ func main() {
 							fmt.Println("2. Lihat Daftar Produk")
 							fmt.Println("3. Ubah Informasi Produk")
 							fmt.Println("4. Update Stok Produk")
-							fmt.Println("5. Hapus User")
+							fmt.Println("5. Hapus Produk")
 							fmt.Println("0. Kembali")
 							fmt.Print("Pilih Menu: ")
 							fmt.Scanln(&menuProduk)
@@ -107,7 +107,9 @@ func main() {
 								result, permit := products.ReadProducts()
 								if permit {
 									for _, a := range result {
-										fmt.Println(a)
+										fmt.Printf("Barcode : %s \nNama Editor : %s \nNama Barang : %s \nHarga : %d \nStok : %d \n", a.Barcode, a.UserNama, a.Nama, a.Harga, a.Stok)
+										fmt.Println("================================")
+										// fmt.Println(a)
 									}
 								}
 							case 3:

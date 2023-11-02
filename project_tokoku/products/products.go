@@ -36,7 +36,7 @@ func (ps *ProductSystem) ReadProducts() ([]model.Product, bool) {
 	var listProduk []model.Product
 
 	err := ps.DB.Model(&model.Product{}).
-		Select("products.*, users.nama").
+		Select("products.*, users.nama as nama").
 		Joins("JOIN users on products.user_id = users.username").
 		Scan(&listProduk).
 		Error
