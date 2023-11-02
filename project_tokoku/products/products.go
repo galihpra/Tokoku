@@ -68,3 +68,21 @@ func (ps *ProductSystem) UpdateInfoProduk(barcode string, produkUpdate model.Pro
 
 	return true
 }
+
+func (ps *ProductSystem) GetProductsByID(Barcode []string) ([]model.Product, bool) {
+	var listProduk []model.Product
+
+	for i := 0; i < len(Barcode); i++ {
+		var produk model.Product
+		err := ps.DB.Where("barcode = ?", Barcode[i]).Find(&produk).Error
+
+		if err != nil {
+			fmt.Println("Error:", err.Error())
+			return nil, false
+		}
+
+		listProduk = append(listProduk, produk)
+	}
+
+	return listProduk, true
+}
