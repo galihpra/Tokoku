@@ -196,8 +196,8 @@ func main() {
 						var menuTransaksiActive bool = true
 						for menuTransaksiActive {
 							fmt.Println("Menu Transaksi:")
-							fmt.Println("1. Buat Transaksi")
-							fmt.Println("2. Lihat Daftar Transaksi")
+							fmt.Println("1. Lihat Daftar Produk")
+							fmt.Println("2. Pilih Produk")
 							fmt.Println("3. Ubah Informasi Transaksi")
 							fmt.Println("4. Hapus Transaksi")
 							fmt.Println("0. Kembali")
@@ -205,15 +205,83 @@ func main() {
 							fmt.Scanln(&menuTransaksi)
 							switch menuTransaksi {
 							case 1:
-								result, permit := pembelian.CreatePembelian(result.Username)
+								result, permit := products.ReadProducts()
 								if permit {
-									fmt.Println(result)
+									fmt.Println("====================================")
+									fmt.Println(" Barcode    Produk     Harga    Stok")
+									fmt.Println("------------------------------------")
+									for _, a := range result {
+										fmt.Println(a.Barcode, "  ", a.Nama, "  ", a.Harga, "  ", a.Stok)
+									}
+									fmt.Println("====================================")
 								}
 							case 2:
-								result, permit := pembelian.ReadPembelian()
+
+								listCustomer, permit := customer.ReadCustomer()
 								if permit {
-									for _, a := range result {
-										fmt.Println(a)
+									fmt.Println("====================================")
+									fmt.Println("   Barcode         Nama Customer")
+									fmt.Println("------------------------------------")
+									for _, a := range listCustomer {
+										fmt.Println(a.Hp, "            ", a.Nama)
+									}
+									fmt.Println("====================================")
+								}
+
+								var HP string
+								fmt.Print("Masukkan Nomor HP Customer: ")
+								fmt.Scanln(&HP)
+
+								var PilihBarang []string
+								var Jumlah []int
+								var barcode string
+								var jml int
+								for {
+									fmt.Println("Masukkan Barcode Produk: ")
+									fmt.Scanln(&barcode)
+									fmt.Println("Masukkan Jumlah Produk: ")
+									fmt.Scanln(&jml)
+
+									PilihBarang = append(PilihBarang, barcode)
+									Jumlah = append(Jumlah, jml)
+
+									fmt.Print("Tambahkan Produk Lainnya? (y/n): ")
+									var pilihan string
+									fmt.Scanln(&pilihan)
+
+									if pilihan != "y" {
+										hasil, permit := products.GetProductsByID(PilihBarang)
+										if permit {
+											var i int
+											var total int
+											fmt.Println("====================================")
+											fmt.Println(" Produk    Jumlah     Sub Total")
+											fmt.Println("------------------------------------")
+											for _, a := range hasil {
+												fmt.Println(a.Nama, "    ", Jumlah[i], "    ", a.Harga*Jumlah[i])
+												total += a.Harga * Jumlah[i]
+												i++
+											}
+											fmt.Println("              total : ", total)
+											fmt.Println("====================================")
+										}
+
+										var simpanTransaksi string
+										fmt.Print("Buat Transaksi? (y/n): ")
+										fmt.Scanln(&simpanTransaksi)
+										if simpanTransaksi == "y" {
+											pembelian.CreatePembelian(HP, result.Username)
+											detailPembelian.CreateDetailPembelian(PilihBarang, Jumlah)
+											PilihBarang = nil
+											Jumlah = nil
+											fmt.Println("*********Transaksi Berhasil*********")
+											break
+										} else if simpanTransaksi == "n" {
+											PilihBarang = nil
+											Jumlah = nil
+											fmt.Println("*********Transaksi Dibatalkan*********")
+											break
+										}
 									}
 								}
 							case 3:
@@ -236,7 +304,7 @@ func main() {
 							fmt.Scanln(&menuDetailTransaksi)
 							switch menuDetailTransaksi {
 							case 1:
-								result, permit := detailPembelian.CreateDetailPembelian()
+								// result, permit := detailPembelian.CreateDetailPembelian()
 								if permit {
 									fmt.Println(result)
 								}
@@ -391,7 +459,7 @@ func main() {
 							fmt.Scanln(&menuTransaksi)
 							switch menuTransaksi {
 							case 1:
-								result, permit := pembelian.CreatePembelian(result.Username)
+								// result, permit := pembelian.CreatePembelian(result.Username)
 								if permit {
 									fmt.Println(result)
 								}
@@ -420,7 +488,7 @@ func main() {
 							fmt.Scanln(&menuDetailTransaksi)
 							switch menuDetailTransaksi {
 							case 1:
-								result, permit := detailPembelian.CreateDetailPembelian()
+								// result, permit := detailPembelian.CreateDetailPembelian()
 								if permit {
 									fmt.Println(result)
 								}

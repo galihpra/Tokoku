@@ -3,6 +3,7 @@ package pembelian
 import (
 	"fmt"
 	"project_tokoku/model"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -11,12 +12,16 @@ type PembelianSystem struct {
 	DB *gorm.DB
 }
 
-func (ps *PembelianSystem) CreatePembelian(userID string) (model.Pembelian, bool) {
+var tanggal = time.Now()
+
+func buatInvoice() string {
+	return fmt.Sprintf("TKK--%d-%02d-%02d-%03d", tanggal.Year(), tanggal.Month(), tanggal.Day(), tanggal.Minute())
+}
+
+func (ps *PembelianSystem) CreatePembelian(HP, userID string) (model.Pembelian, bool) {
 	var newPembelian = new(model.Pembelian)
-	fmt.Print("Masukkan Nomor Invoice: ")
-	fmt.Scanln(&newPembelian.No_invoice)
-	fmt.Print("Masukkan Nomor HP Customer: ")
-	fmt.Scanln(&newPembelian.CustomerID)
+	newPembelian.CustomerID = HP
+	newPembelian.No_invoice = buatInvoice()
 	newPembelian.UserID = userID
 
 	err := ps.DB.Create(newPembelian).Error
