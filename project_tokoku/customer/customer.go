@@ -1,8 +1,11 @@
 package customer
 
 import (
+	"bufio"
 	"fmt"
+	"os"
 	"project_tokoku/model"
+	"strings"
 
 	"gorm.io/gorm"
 )
@@ -15,8 +18,12 @@ func (cs *CustomerSystem) CreateCustomer() (model.Customer, bool) {
 	var newCustomer = new(model.Customer)
 	fmt.Print("Masukkan Nomor HP: ")
 	fmt.Scanln(&newCustomer.Hp)
-	fmt.Print("Masukkan Nama: ")
-	fmt.Scanln(&newCustomer.Nama)
+
+	reader := bufio.NewReader(os.Stdin)
+
+	fmt.Print("Masukkan Nama Produk: ")
+	name, _ := reader.ReadString('\n')
+	newCustomer.Nama = strings.TrimSpace(name)
 
 	err := cs.DB.Create(newCustomer).Error
 	if err != nil {

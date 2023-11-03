@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"os"
 	"project_tokoku/auth"
 	"project_tokoku/config"
 	"project_tokoku/customer"
@@ -10,9 +12,13 @@ import (
 	"project_tokoku/pembelian"
 	"project_tokoku/products"
 	"project_tokoku/users"
+	"strings"
+	"time"
 )
 
 func main() {
+	reader := bufio.NewReader(os.Stdin)
+
 	var inputMenu int
 	db, err := config.InitDB()
 	if err != nil {
@@ -50,7 +56,6 @@ func main() {
 					fmt.Println("2. Produk")
 					fmt.Println("3. Customer")
 					fmt.Println("4. Transaksi")
-					fmt.Println("5. Detail Transaksi")
 					fmt.Println("0. Logout")
 					fmt.Println("99. Exit")
 					fmt.Print("Pilih Menu: ")
@@ -63,8 +68,6 @@ func main() {
 							fmt.Println("Menu User:")
 							fmt.Println("1. Tambahkan User")
 							fmt.Println("2. Lihat Daftar User")
-							fmt.Println("3. Ubah Informasi User")
-							fmt.Println("4. Hapus User")
 							fmt.Println("0. Kembali")
 							fmt.Print("Pilih Menu: ")
 							fmt.Scanln(&menuUser)
@@ -78,11 +81,49 @@ func main() {
 								result, permit := users.ReadUser()
 								if permit {
 									for _, a := range result {
-										fmt.Println(a)
+										fmt.Printf("Nama : %s \nUsername : %s \nPassword : %s \n", a.Nama, a.Username, a.Password)
+										fmt.Println("================================")
 									}
 								}
-							case 3:
-							case 4:
+								var menuInUser int
+								var menuInUserActive bool = true
+								for menuInUserActive {
+									fmt.Println("Menu User: ")
+									fmt.Println("1. Ubah Data User")
+									fmt.Println("2. Hapus User")
+									fmt.Println("0. Kembali")
+									fmt.Println("Pilih Menu: ")
+									fmt.Scanln(&menuInUser)
+									switch menuInUser {
+									case 1:
+										var username string
+										var userUpdate model.User
+										fmt.Print("Masukkan username: ")
+										fmt.Scanln(&username)
+
+										fmt.Print("Masukkan Nama: ")
+										name, _ := reader.ReadString('\n')
+										userUpdate.Nama = strings.TrimSpace(name)
+										fmt.Print("Masukkan Password: ")
+										fmt.Scanln(&userUpdate.Password)
+
+										success := users.UpdateUser(username, userUpdate)
+
+										if success {
+											fmt.Println("Produk berhasil diubah")
+										}
+									case 2:
+										var username string
+										fmt.Print("Masukkan Username: ")
+										fmt.Scanln(&username)
+										sucess := users.DeleteUser(username)
+										if sucess {
+											fmt.Println("Data user berhasil dihapus")
+										}
+									case 0:
+										menuInUserActive = false
+									}
+								}
 							case 0:
 								menuUserActive = false
 							}
@@ -109,20 +150,33 @@ func main() {
 							case 2:
 								result, permit := products.ReadProducts()
 								if permit {
+									fmt.Println("====================================")
+									fmt.Println(" Barcode    Produk     Harga    Stok    InputBy")
+									fmt.Println("------------------------------------")
 									for _, a := range result {
-										fmt.Printf("Barcode : %s \nNama Editor : %s \nNama Barang : %s \nHarga : %d \nStok : %d \n", a.Barcode, a.UserNama, a.Nama, a.Harga, a.Stok)
-										fmt.Println("================================")
-										// fmt.Println(a)
+										fmt.Println(a.Barcode, "  ", a.Nama, "  ", a.Harga, "  ", a.Stok, "  ", a.UserNama)
 									}
+									fmt.Println("====================================")
 								}
 							case 3:
+								hasil, permit := products.ReadProducts()
+								if permit {
+									fmt.Println("====================================")
+									fmt.Println(" Barcode    Produk     Harga    Stok")
+									fmt.Println("------------------------------------")
+									for _, a := range hasil {
+										fmt.Println(a.Barcode, "  ", a.Nama, "  ", a.Harga, "  ", a.Stok)
+									}
+									fmt.Println("====================================")
+								}
 								var barcode string
 								var produkUpdate model.Product
 								fmt.Print("Masukkan barcode produk: ")
 								fmt.Scanln(&barcode)
 
 								fmt.Print("Masukkan Nama Produk: ")
-								fmt.Scanln(&produkUpdate.Nama)
+								name, _ := reader.ReadString('\n')
+								produkUpdate.Nama = strings.TrimSpace(name)
 								fmt.Print("Masukkan Harga Produk: ")
 								fmt.Scanln(&produkUpdate.Harga)
 								produkUpdate.UserID = result.Username
@@ -134,7 +188,47 @@ func main() {
 								}
 
 							case 4:
+								hasil, permit := products.ReadProducts()
+								if permit {
+									fmt.Println("====================================")
+									fmt.Println(" Barcode    Produk     Harga    Stok")
+									fmt.Println("------------------------------------")
+									for _, a := range hasil {
+										fmt.Println(a.Barcode, "  ", a.Nama, "  ", a.Harga, "  ", a.Stok)
+									}
+									fmt.Println("====================================")
+								}
+								var barcode string
+								var produkUpdate model.Product
+								fmt.Print("Masukkan barcode produk: ")
+								fmt.Scanln(&barcode)
+
+								fmt.Print("Masukkan Stok Produk: ")
+								fmt.Scanln(&produkUpdate.Stok)
+
+								success := products.UpdateStokProduk(barcode, produkUpdate)
+
+								if success {
+									fmt.Println("Stok produk berhasil diubah")
+								}
 							case 5:
+								hasil, permit := products.ReadProducts()
+								if permit {
+									fmt.Println("====================================")
+									fmt.Println(" Barcode    Produk     Harga    Stok")
+									fmt.Println("------------------------------------")
+									for _, a := range hasil {
+										fmt.Println(a.Barcode, "  ", a.Nama, "  ", a.Harga, "  ", a.Stok)
+									}
+									fmt.Println("====================================")
+								}
+								var barcode string
+								fmt.Print("Masukkan barcode produk: ")
+								fmt.Scanln(&barcode)
+								sucess := products.DeleteProduct(barcode)
+								if sucess {
+									fmt.Println("Data produk berhasil dihapus")
+								}
 							case 0:
 								menuProdukActive = false
 							}
@@ -160,18 +254,33 @@ func main() {
 							case 2:
 								result, permit := customer.ReadCustomer()
 								if permit {
+									fmt.Println("====================================")
+									fmt.Println("   Barcode         Nama Customer")
+									fmt.Println("------------------------------------")
 									for _, a := range result {
-										fmt.Println(a)
+										fmt.Println(a.Hp, "            ", a.Nama)
 									}
+									fmt.Println("====================================")
 								}
 							case 3:
+								result, permit := customer.ReadCustomer()
+								if permit {
+									fmt.Println("====================================")
+									fmt.Println("   Barcode         Nama Customer")
+									fmt.Println("------------------------------------")
+									for _, a := range result {
+										fmt.Println(a.Hp, "            ", a.Nama)
+									}
+									fmt.Println("====================================")
+								}
 								var hp string
 								var customerUpdate model.Customer
 								fmt.Print("Masukkan Nomor HP: ")
 								fmt.Scanln(&hp)
 
 								fmt.Print("Masukkan Nama Customer: ")
-								fmt.Scanln(&customerUpdate.Nama)
+								name, _ := reader.ReadString('\n')
+								customerUpdate.Nama = strings.TrimSpace(name)
 
 								success := customer.UpdateCustomer(hp, customerUpdate)
 
@@ -179,6 +288,16 @@ func main() {
 									fmt.Println("Customer berhasil diubah")
 								}
 							case 4:
+								result, permit := customer.ReadCustomer()
+								if permit {
+									fmt.Println("====================================")
+									fmt.Println("   Barcode         Nama Customer")
+									fmt.Println("------------------------------------")
+									for _, a := range result {
+										fmt.Println(a.Hp, "            ", a.Nama)
+									}
+									fmt.Println("====================================")
+								}
 								var customerID string
 								fmt.Print("Masukkan Nomor HP: ")
 								fmt.Scanln(&customerID)
@@ -272,6 +391,28 @@ func main() {
 												PilihBarang = nil
 												Jumlah = nil
 												fmt.Println("*********Transaksi Selesai*********")
+
+												//nota
+												var tanggal = time.Now()
+												r, permit := detailPembelian.ReadDetailPembelian(fmt.Sprintf("TKK-%d%d%d%d%d", tanggal.Year(), tanggal.Month(), tanggal.Day(), tanggal.Minute(), tanggal.Second()))
+												var total int
+												if permit {
+													fmt.Println("======================================")
+													fmt.Println("Staff :", result.Nama)
+													fmt.Println(tanggal.Format("2006-01-02"))
+													fmt.Println("Nomor Invoice: ", r[0].PembelianID)
+													fmt.Println("--------------------------------------")
+													fmt.Println("Barang", "   ", "Jumlah", "     ", "Sub total")
+													fmt.Println("--------------------------------------")
+													for _, a := range r {
+														fmt.Println(a.ProdukNama, "      ", a.Qty, "          ", a.Sub_total)
+														total += a.Sub_total
+													}
+													fmt.Println("--------------------------------------")
+													fmt.Println("Total                      ", total)
+													fmt.Println("======================================")
+												}
+
 												break
 											} else if simpanTransaksi == "n" {
 												PilihBarang = nil
@@ -398,7 +539,6 @@ func main() {
 							fmt.Println("2. Lihat Daftar Produk")
 							fmt.Println("3. Ubah Informasi Produk")
 							fmt.Println("4. Update Stok Produk")
-							fmt.Println("5. Hapus User")
 							fmt.Println("0. Kembali")
 							fmt.Print("Pilih Menu: ")
 							fmt.Scanln(&menuProduk)
@@ -411,13 +551,67 @@ func main() {
 							case 2:
 								result, permit := products.ReadProducts()
 								if permit {
+									fmt.Println("====================================")
+									fmt.Println(" Barcode    Produk     Harga    Stok    InputBy")
+									fmt.Println("------------------------------------")
 									for _, a := range result {
-										fmt.Println(a)
+										fmt.Println(a.Barcode, "  ", a.Nama, "  ", a.Harga, "  ", a.Stok, "  ", a.UserNama)
 									}
+									fmt.Println("====================================")
 								}
 							case 3:
+								hasil, permit := products.ReadProducts()
+								if permit {
+									fmt.Println("====================================")
+									fmt.Println(" Barcode    Produk     Harga    Stok")
+									fmt.Println("------------------------------------")
+									for _, a := range hasil {
+										fmt.Println(a.Barcode, "  ", a.Nama, "  ", a.Harga, "  ", a.Stok)
+									}
+									fmt.Println("====================================")
+								}
+								var barcode string
+								var produkUpdate model.Product
+								fmt.Print("Masukkan barcode produk: ")
+								fmt.Scanln(&barcode)
+
+								fmt.Print("Masukkan Nama Produk: ")
+								name, _ := reader.ReadString('\n')
+								produkUpdate.Nama = strings.TrimSpace(name)
+								fmt.Print("Masukkan Harga Produk: ")
+								fmt.Scanln(&produkUpdate.Harga)
+								produkUpdate.UserID = result.Username
+
+								success := products.UpdateInfoProduk(barcode, produkUpdate)
+
+								if success {
+									fmt.Println("Produk berhasil diubah")
+								}
+
 							case 4:
-							case 5:
+								hasil, permit := products.ReadProducts()
+								if permit {
+									fmt.Println("====================================")
+									fmt.Println(" Barcode    Produk     Harga    Stok")
+									fmt.Println("------------------------------------")
+									for _, a := range hasil {
+										fmt.Println(a.Barcode, "  ", a.Nama, "  ", a.Harga, "  ", a.Stok)
+									}
+									fmt.Println("====================================")
+								}
+								var barcode string
+								var produkUpdate model.Product
+								fmt.Print("Masukkan barcode produk: ")
+								fmt.Scanln(&barcode)
+
+								fmt.Print("Masukkan Stok Produk: ")
+								fmt.Scanln(&produkUpdate.Stok)
+
+								success := products.UpdateStokProduk(barcode, produkUpdate)
+
+								if success {
+									fmt.Println("Stok produk berhasil diubah")
+								}
 							case 0:
 								menuProdukActive = false
 							}
@@ -442,18 +636,33 @@ func main() {
 							case 2:
 								result, permit := customer.ReadCustomer()
 								if permit {
+									fmt.Println("====================================")
+									fmt.Println("   Barcode         Nama Customer")
+									fmt.Println("------------------------------------")
 									for _, a := range result {
-										fmt.Println(a)
+										fmt.Println(a.Hp, "            ", a.Nama)
 									}
+									fmt.Println("====================================")
 								}
 							case 3:
+								result, permit := customer.ReadCustomer()
+								if permit {
+									fmt.Println("====================================")
+									fmt.Println("   Barcode         Nama Customer")
+									fmt.Println("------------------------------------")
+									for _, a := range result {
+										fmt.Println(a.Hp, "            ", a.Nama)
+									}
+									fmt.Println("====================================")
+								}
 								var hp string
 								var customerUpdate model.Customer
 								fmt.Print("Masukkan Nomor HP: ")
 								fmt.Scanln(&hp)
 
 								fmt.Print("Masukkan Nama Customer: ")
-								fmt.Scanln(&customerUpdate.Nama)
+								name, _ := reader.ReadString('\n')
+								customerUpdate.Nama = strings.TrimSpace(name)
 
 								success := customer.UpdateCustomer(hp, customerUpdate)
 
@@ -546,6 +755,28 @@ func main() {
 												PilihBarang = nil
 												Jumlah = nil
 												fmt.Println("*********Transaksi Selesai*********")
+
+												//nota
+												var tanggal = time.Now()
+												r, permit := detailPembelian.ReadDetailPembelian(fmt.Sprintf("TKK-%d%d%d%d%d", tanggal.Year(), tanggal.Month(), tanggal.Day(), tanggal.Minute(), tanggal.Second()))
+												var total int
+												if permit {
+													fmt.Println("======================================")
+													fmt.Println("Staff :", result.Nama)
+													fmt.Println(tanggal.Format("2006-01-02"))
+													fmt.Println("Nomor Invoice: ", r[0].PembelianID)
+													fmt.Println("--------------------------------------")
+													fmt.Println("Barang", "   ", "Jumlah", "     ", "Sub total")
+													fmt.Println("--------------------------------------")
+													for _, a := range r {
+														fmt.Println(a.ProdukNama, "      ", a.Qty, "          ", a.Sub_total)
+														total += a.Sub_total
+													}
+													fmt.Println("--------------------------------------")
+													fmt.Println("Total                      ", total)
+													fmt.Println("======================================")
+												}
+
 												break
 											} else if simpanTransaksi == "n" {
 												PilihBarang = nil
