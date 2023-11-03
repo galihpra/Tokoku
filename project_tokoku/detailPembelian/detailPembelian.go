@@ -108,3 +108,20 @@ func (dps *DetailPembelianSystem) UpdateDetailPembelian(barcode, invoice string,
 
 	return true
 }
+
+func (dps *DetailPembelianSystem) DeleteDetail(Barcode, Invoice string) bool {
+	var details model.DetailPembelian
+
+	qry := dps.DB.Where("product_id = ? AND pembelian_id = ?", Barcode, Invoice).First(&details)
+	if qry.Error != nil {
+		fmt.Println("Detail produk tidak ditemukan")
+		return false
+	}
+
+	if err := dps.DB.Delete(&details).Error; err != nil {
+		fmt.Println("Gagal menghapus detail transaksi: ", err.Error())
+		return false
+	}
+
+	return true
+}

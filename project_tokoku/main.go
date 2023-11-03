@@ -343,6 +343,13 @@ func main() {
 													fmt.Println("Detail transaksi berhasil diubah")
 												}
 											case 2:
+												var Barcode string
+												fmt.Print("Masukkan Barcode: ")
+												fmt.Scanln(&Barcode)
+												sucess := detailPembelian.DeleteDetail(Barcode, invoice)
+												if sucess {
+													fmt.Println("Data detail transaksi berhasil dihapus")
+												}
 											case 0:
 												menuDetailTransaksiActive = false
 											}
