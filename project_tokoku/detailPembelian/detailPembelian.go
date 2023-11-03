@@ -12,10 +12,9 @@ type DetailPembelianSystem struct {
 	DB *gorm.DB
 }
 
-var tanggal = time.Now()
-
 func buatInvoice() string {
-	return fmt.Sprintf("TKK--%d-%02d-%02d-%03d", tanggal.Year(), tanggal.Month(), tanggal.Day(), tanggal.Minute())
+	var tanggal = time.Now()
+	return fmt.Sprintf("TKK-%d%d%d%d%d", tanggal.Year(), tanggal.Month(), tanggal.Day(), tanggal.Minute(), tanggal.Second())
 }
 
 func (dps *DetailPembelianSystem) CreateDetailPembelian(Barcode []string, Jumlah []int) (model.DetailPembelian, bool) {
@@ -36,9 +35,26 @@ func (dps *DetailPembelianSystem) CreateDetailPembelian(Barcode []string, Jumlah
 		subTotal := product.Harga * newDetailPembelian.Qty
 		newDetailPembelian.Sub_total = subTotal
 
+		// Validasi stok cukup
+		if product.Stok < newDetailPembelian.Qty {
+			fmt.Println(">>>>>>>>STOK TIDAK CUKUP!!!<<<<<<<<<")
+			return model.DetailPembelian{}, false
+		}
+
 		err := dps.DB.Create(newDetailPembelian).Error
 		if err != nil {
 			fmt.Println("input error:", err.Error())
+			return model.DetailPembelian{}, false
+		}
+
+		product.Stok -= newDetailPembelian.Qty
+
+		if product.Stok < 0 {
+			product.Stok = 0
+		}
+
+		if err := dps.DB.Save(&product).Error; err != nil {
+			fmt.Println("error mengurangi stok:", err.Error())
 			return model.DetailPembelian{}, false
 		}
 	}

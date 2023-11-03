@@ -273,7 +273,7 @@ func main() {
 												detailPembelian.CreateDetailPembelian(PilihBarang, Jumlah)
 												PilihBarang = nil
 												Jumlah = nil
-												fmt.Println("*********Transaksi Berhasil*********")
+												fmt.Println("*********Transaksi Selesai*********")
 												break
 											} else if simpanTransaksi == "n" {
 												PilihBarang = nil

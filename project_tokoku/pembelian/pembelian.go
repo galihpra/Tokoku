@@ -12,10 +12,9 @@ type PembelianSystem struct {
 	DB *gorm.DB
 }
 
-var tanggal = time.Now()
-
 func buatInvoice() string {
-	return fmt.Sprintf("TKK--%d-%02d-%02d-%03d", tanggal.Year(), tanggal.Month(), tanggal.Day(), tanggal.Minute())
+	var tanggal = time.Now()
+	return fmt.Sprintf("TKK-%d%d%d%d%d", tanggal.Year(), tanggal.Month(), tanggal.Day(), tanggal.Minute(), tanggal.Second())
 }
 
 func (ps *PembelianSystem) CreatePembelian(HP, userID string, total int) (model.Pembelian, bool) {
