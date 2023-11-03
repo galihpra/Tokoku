@@ -91,6 +91,8 @@ func (dps *DetailPembelianSystem) UpdateDetailPembelian(barcode, invoice string,
 		return false
 	}
 
+	qtyLama := details.Qty
+
 	details.Qty = detailPembelianUpdate.Qty
 
 	product := model.Product{}
@@ -101,8 +103,22 @@ func (dps *DetailPembelianSystem) UpdateDetailPembelian(barcode, invoice string,
 	}
 	details.Sub_total = details.Qty * product.Harga
 
+	totalChange := (details.Qty - qtyLama) * product.Harga
+
 	if err := dps.DB.Model(&details).Updates(&details).Error; err != nil {
 		fmt.Println("Gagal mengupdate detail transaksi: ", err.Error())
+		return false
+	}
+
+	var pembelian = model.Pembelian{}
+	if err := dps.DB.Where("no_invoice = ?", invoice).First(&pembelian).Error; err != nil {
+		fmt.Println("Pembelian tidak ditemukan: ", err.Error())
+		return false
+	}
+
+	pembelian.Total += totalChange
+	if err := dps.DB.Save(&pembelian).Error; err != nil {
+		fmt.Println("Gagal mengupdate transaksi: ", err.Error())
 		return false
 	}
 
