@@ -46,3 +46,17 @@ func (ps *PembelianSystem) ReadPembelian() ([]model.Pembelian, bool) {
 
 	return pembelianList, true
 }
+
+func (ps *PembelianSystem) DeletePembelian(invoice string) bool {
+	if err := ps.DB.Where("pembelian_id = ?", invoice).Delete(&model.DetailPembelian{}).Error; err != nil {
+		fmt.Println("Gagal menghapus detail_pembelian: ", err.Error())
+		return false
+	}
+
+	if err := ps.DB.Where("no_invoice = ?", invoice).Delete(&model.Pembelian{}).Error; err != nil {
+		fmt.Println("Gagal menghapus pembelian: ", err.Error())
+		return false
+	}
+
+	return true
+}

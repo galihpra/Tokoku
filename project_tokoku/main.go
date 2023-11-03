@@ -198,7 +198,6 @@ func main() {
 							fmt.Println("1. Lihat Daftar Produk")
 							fmt.Println("2. Pilih Produk")
 							fmt.Println("3. Lihat Daftar Transaksi")
-							fmt.Println("4. Hapus Transaksi")
 							fmt.Println("0. Kembali")
 							fmt.Print("Pilih Menu: ")
 							fmt.Scanln(&menuTransaksi)
@@ -355,11 +354,17 @@ func main() {
 											}
 										}
 									case 2:
+										var invoice string
+										fmt.Println("Masukkan Nomor Invoice: ")
+										fmt.Scanln(&invoice)
+										sucess := pembelian.DeletePembelian(invoice)
+										if sucess {
+											fmt.Println("Data transaksi berhasil dihapus")
+										}
 									case 0:
 										menuDaftarTransaksiActive = false
 									}
 								}
-							case 4:
 							case 0:
 								menuTransaksiActive = false
 							}
