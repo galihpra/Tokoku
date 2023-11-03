@@ -62,15 +62,15 @@ func (dps *DetailPembelianSystem) CreateDetailPembelian(Barcode []string, Jumlah
 	return *newDetailPembelian, true
 }
 
-func (dps *DetailPembelianSystem) ReadDetailPembelian() ([]model.DetailPembelian, bool) {
+func (dps *DetailPembelianSystem) ReadDetailPembelian(invoice string) ([]model.DetailPembelian, bool) {
 	var listDetail []model.DetailPembelian
 
-	var invoice string
-	fmt.Println("Masukkan Nomor Invoice: ")
-	fmt.Scanln(&invoice)
+	// var invoice string
+	// fmt.Println("Masukkan Nomor Invoice: ")
+	// fmt.Scanln(&invoice)
 
 	err := dps.DB.Where("pembelian_id = ?", invoice).Model(&model.DetailPembelian{}).
-		Select("detail_pembelians.pembelian_id, detail_pembelians.qty, detail_pembelians.sub_total, products.nama as nama").
+		Select("detail_pembelians.pembelian_id, detail_pembelians.product_id,detail_pembelians.qty, detail_pembelians.sub_total, products.nama as nama").
 		Joins("JOIN products on detail_pembelians.product_id = products.barcode").
 		Scan(&listDetail).
 		Error
@@ -81,4 +81,30 @@ func (dps *DetailPembelianSystem) ReadDetailPembelian() ([]model.DetailPembelian
 	}
 
 	return listDetail, true
+}
+
+func (dps *DetailPembelianSystem) UpdateDetailPembelian(barcode, invoice string, detailPembelianUpdate model.DetailPembelian) bool {
+	var details model.DetailPembelian
+	qry := dps.DB.Where("product_id = ? AND pembelian_id = ?", barcode, invoice).First(&details)
+	if qry.Error != nil {
+		fmt.Println("Detail transaksi tidak ditemukan")
+		return false
+	}
+
+	details.Qty = detailPembelianUpdate.Qty
+
+	product := model.Product{}
+	cari := dps.DB.Where("barcode = ?", barcode).Take(&product).Error
+	if cari != nil {
+		fmt.Println("input error:", cari.Error())
+		return false
+	}
+	details.Sub_total = details.Qty * product.Harga
+
+	if err := dps.DB.Model(&details).Updates(&details).Error; err != nil {
+		fmt.Println("Gagal mengupdate detail transaksi: ", err.Error())
+		return false
+	}
+
+	return true
 }
