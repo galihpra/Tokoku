@@ -369,50 +369,6 @@ func main() {
 								menuTransaksiActive = false
 							}
 						}
-					case 5:
-						var menuDetailTransaksi int
-						var menuDetailTransaksiActive bool = true
-						for menuDetailTransaksiActive {
-							fmt.Println("Menu Detail Transaksi:")
-							fmt.Println("1. Masukkan Produk")
-							fmt.Println("2. Cetak Struk")
-							fmt.Println("3. Ubah Detail Transaksi")
-							fmt.Println("4. Hapus Detail Transaksi")
-							fmt.Println("0. Kembali")
-							fmt.Print("Pilih Menu: ")
-							fmt.Scanln(&menuDetailTransaksi)
-							switch menuDetailTransaksi {
-							case 1:
-								// result, permit := detailPembelian.CreateDetailPembelian()
-								if permit {
-									fmt.Println(result)
-								}
-							case 2:
-								// jam := time.Now()
-								// r, permit := detailPembelian.ReadDetailPembelian()
-								// var total int
-								// if permit {
-								// 	fmt.Println("======================================")
-								// 	fmt.Println("Staff :", result.Nama)
-								// 	fmt.Println(jam.Format("2006-01-02"))
-								// 	fmt.Println("Nomor Invoice: ", r[0].PembelianID)
-								// 	fmt.Println("--------------------------------------")
-								// 	fmt.Println("Barang", "   ", "Jumlah", "     ", "Sub total")
-								// 	fmt.Println("--------------------------------------")
-								// 	for _, a := range r {
-								// 		fmt.Println(a.ProdukNama, "      ", a.Qty, "          ", a.Sub_total)
-								// 		total += a.Sub_total
-								// 	}
-								// 	fmt.Println("--------------------------------------")
-								// 	fmt.Println("Total                      ", total)
-								// 	fmt.Println("======================================")
-								// }
-							case 3:
-							case 4:
-							case 0:
-								menuDetailTransaksiActive = false
-							}
-						}
 					case 0:
 						permit = false
 						fmt.Println("Anda sudah logout")
@@ -428,7 +384,6 @@ func main() {
 					fmt.Println("1. Produk")
 					fmt.Println("2. Customer")
 					fmt.Println("3. Transaksi")
-					fmt.Println("4. Detail Transaksi")
 					fmt.Println("0. Logout")
 					fmt.Println("99. Exit")
 					fmt.Print("Pilih Menu: ")
@@ -514,69 +469,134 @@ func main() {
 						var menuTransaksiActive bool = true
 						for menuTransaksiActive {
 							fmt.Println("Menu Transaksi:")
-							fmt.Println("1. Buat Transaksi")
-							fmt.Println("2. Lihat Daftar Transaksi")
-							fmt.Println("3. Ubah Informasi Transaksi")
+							fmt.Println("1. Lihat Daftar Produk")
+							fmt.Println("2. Pilih Produk")
+							fmt.Println("3. Lihat Daftar Transaksi")
 							fmt.Println("0. Kembali")
 							fmt.Print("Pilih Menu: ")
 							fmt.Scanln(&menuTransaksi)
 							switch menuTransaksi {
 							case 1:
-								// result, permit := pembelian.CreatePembelian(result.Username)
+								result, permit := products.ReadProducts()
 								if permit {
-									fmt.Println(result)
+									fmt.Println("====================================")
+									fmt.Println(" Barcode    Produk     Harga    Stok")
+									fmt.Println("------------------------------------")
+									for _, a := range result {
+										fmt.Println(a.Barcode, "  ", a.Nama, "  ", a.Harga, "  ", a.Stok)
+									}
+									fmt.Println("====================================")
 								}
 							case 2:
-								result, permit := pembelian.ReadPembelian()
+
+								listCustomer, permit := customer.ReadCustomer()
 								if permit {
-									for _, a := range result {
-										fmt.Println(a)
+									fmt.Println("====================================")
+									fmt.Println("   Barcode         Nama Customer")
+									fmt.Println("------------------------------------")
+									for _, a := range listCustomer {
+										fmt.Println(a.Hp, "            ", a.Nama)
+									}
+									fmt.Println("====================================")
+								}
+
+								var HP string
+								fmt.Print("Masukkan Nomor HP Customer: ")
+								fmt.Scanln(&HP)
+
+								var PilihBarang []string
+								var Jumlah []int
+								var barcode string
+								var jml int
+								for {
+									fmt.Println("Masukkan Barcode Produk: ")
+									fmt.Scanln(&barcode)
+									fmt.Println("Masukkan Jumlah Produk: ")
+									fmt.Scanln(&jml)
+
+									PilihBarang = append(PilihBarang, barcode)
+									Jumlah = append(Jumlah, jml)
+
+									fmt.Print("Tambahkan Produk Lainnya? (y/n): ")
+									var pilihan string
+									fmt.Scanln(&pilihan)
+
+									if pilihan != "y" {
+										hasil, permit := products.GetProductsByID(PilihBarang)
+										if permit {
+											var i int
+											var total int
+											fmt.Println("====================================")
+											fmt.Println(" Produk    Jumlah     Sub Total")
+											fmt.Println("------------------------------------")
+											for _, a := range hasil {
+												fmt.Println(a.Nama, "    ", Jumlah[i], "    ", a.Harga*Jumlah[i])
+												total += a.Harga * Jumlah[i]
+												i++
+											}
+											fmt.Println("              total : ", total)
+											fmt.Println("====================================")
+
+											var simpanTransaksi string
+											fmt.Print("Buat Transaksi? (y/n): ")
+											fmt.Scanln(&simpanTransaksi)
+											if simpanTransaksi == "y" {
+												pembelian.CreatePembelian(HP, result.Username, total)
+												detailPembelian.CreateDetailPembelian(PilihBarang, Jumlah)
+												PilihBarang = nil
+												Jumlah = nil
+												fmt.Println("*********Transaksi Selesai*********")
+												break
+											} else if simpanTransaksi == "n" {
+												PilihBarang = nil
+												Jumlah = nil
+												fmt.Println("*********Transaksi Dibatalkan*********")
+												break
+											}
+										}
 									}
 								}
 							case 3:
-							case 4:
+								result, permit := pembelian.ReadPembelian()
+								if permit {
+									fmt.Println("====================================")
+									fmt.Println(" Invoice    Customer     Total")
+									fmt.Println("------------------------------------")
+									for _, a := range result {
+										fmt.Println(a.No_invoice, "    ", a.CustomerID, "    ", a.Total)
+									}
+									fmt.Println("====================================")
+								}
+								var menuDaftarTransaksi int
+								var menuDaftarTransaksiActive bool = true
+								for menuDaftarTransaksiActive {
+									fmt.Println("Menu Lihat Daftar Transaksi:")
+									fmt.Println("1. Lihat Detail Transaksi")
+									fmt.Println("0. Kembali")
+									fmt.Print("Pilih Menu: ")
+									fmt.Scanln(&menuDaftarTransaksi)
+									switch menuDaftarTransaksi {
+									case 1:
+										var invoice string
+										fmt.Println("Masukkan Nomor Invoice: ")
+										fmt.Scanln(&invoice)
+										result, permit := detailPembelian.ReadDetailPembelian(invoice)
+										if permit {
+											fmt.Println("====================================")
+											fmt.Println("Barang", "   ", "Jumlah", "     ", "Sub total")
+											fmt.Println("--------------------------------------")
+											for _, a := range result {
+												fmt.Println(a.ProductID, a.ProdukNama, "      ", a.Qty, "          ", a.Sub_total)
+											}
+											fmt.Println("====================================")
+										}
+
+									case 0:
+										menuDaftarTransaksiActive = false
+									}
+								}
 							case 0:
 								menuTransaksiActive = false
-							}
-						}
-					case 4:
-						var menuDetailTransaksi int
-						var menuDetailTransaksiActive bool = true
-						for menuDetailTransaksiActive {
-							fmt.Println("Menu Detail Transaksi:")
-							fmt.Println("1. Masukkan Produk")
-							fmt.Println("2. Cetak Struk")
-							fmt.Println("0. Kembali")
-							fmt.Print("Pilih Menu: ")
-							fmt.Scanln(&menuDetailTransaksi)
-							switch menuDetailTransaksi {
-							case 1:
-								// result, permit := detailPembelian.CreateDetailPembelian()
-								if permit {
-									fmt.Println(result)
-								}
-							case 2:
-								// jam := time.Now()
-								// r, permit := detailPembelian.ReadDetailPembelian()
-								// var total int
-								// if permit {
-								// 	fmt.Println("======================================")
-								// 	fmt.Println("Staff :", result.Nama)
-								// 	fmt.Println(jam.Format("2006-01-02"))
-								// 	fmt.Println("Nomor Invoice: ", r[0].PembelianID)
-								// 	fmt.Println("--------------------------------------")
-								// 	fmt.Println("Barang", "   ", "Jumlah", "     ", "Sub total")
-								// 	fmt.Println("--------------------------------------")
-								// 	for _, a := range r {
-								// 		fmt.Println(a.ProdukNama, "      ", a.Qty, "          ", a.Sub_total)
-								// 		total += a.Sub_total
-								// 	}
-								// 	fmt.Println("--------------------------------------")
-								// 	fmt.Println("Total                      ", total)
-								// 	fmt.Println("======================================")
-								// }
-							case 0:
-								menuDetailTransaksiActive = false
 							}
 						}
 					case 0:
