@@ -6,3 +6,5 @@ Dimana pengguna terbagi menjadi dua role, yakni admin dan user. Admin dapat meng
 Sedangkan peran user terbatas pada aktivitas input dan edit data, user tidak dapat menghapus data.
 
 ![ERD](https://raw.githubusercontent.com/Kelompok-2-Wanderer/Wanderer-BE/docs/docs/erd.png)
+
+5. **Create a** <span style="background-color: #4CAF50; color: white; padding: 5px; border-radius: 4px;">.env</span> **file and copy** .env.example **to your** .env
